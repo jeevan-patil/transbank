@@ -24,23 +24,4 @@ public class CoreBankController {
 	return "cash/handle";
     }
 
-    /**
-     * adding customer
-     * 
-     * @return
-     */
-    @RequestMapping(value = "customer/add", method = RequestMethod.GET)
-    public String addCustomer() {
-	return "customer/add";
-    }
-
-    /**
-     * view customer info
-     * 
-     * @return
-     */
-    @RequestMapping(value = "customer/view", method = RequestMethod.GET)
-    public String viewCustomer() {
-	return "customer/view";
-    }
 }
