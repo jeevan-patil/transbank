@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,9 @@ import com.transbank.online.service.iface.CustomerService;
 public class CustomerController {
 
     private CustomerService customerService;
+    
+    @Value("${my.id}")
+    private String myId;
     
     /**
      * adding customer
@@ -34,7 +38,7 @@ public class CustomerController {
      */
     @RequestMapping(value = "customer/view", method = RequestMethod.GET)
     public String viewCustomer(Model model) {
-	List<Customer> custList = customerService.getCustomerById("007bond");
+	List<Customer> custList = customerService.getCustomerById(myId);
 	model.addAttribute("customerList", custList);
 	return "customer/view";    
     }
