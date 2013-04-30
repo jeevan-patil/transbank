@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -23,6 +24,7 @@ public class Customer implements Serializable {
      */
     private static final long serialVersionUID = -9186357723906698510L;
 
+    @Id
     @Column(name = "username")
     private String userName;
     

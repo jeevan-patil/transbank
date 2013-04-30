@@ -38,8 +38,8 @@ public class CustomerController {
      */
     @RequestMapping(value = "customer/view", method = RequestMethod.GET)
     public String viewCustomer(Model model) {
-	List<Customer> custList = customerService.getCustomerById(myId);
-	model.addAttribute("customerList", custList);
+	Customer cust = customerService.getCustomerById(myId);
+	model.addAttribute("customerList", cust);
 	return "customer/view";    
     }
 

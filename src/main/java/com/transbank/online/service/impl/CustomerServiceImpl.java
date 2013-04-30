@@ -1,29 +1,36 @@
 package com.transbank.online.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.transbank.online.bean.Customer;
 import com.transbank.online.dao.iface.CustomerDao;
 import com.transbank.online.service.iface.CustomerService;
 
+/**
+ * 
+ * @author jeevan
+ * @since Apr 30, 2013
+ * @purpose
+ * 
+ */
 @Service("customerService")
 public class CustomerServiceImpl implements CustomerService {
 
     private CustomerDao customerDao;
 
     @Override
-    public List<Customer> getCustomerById(String id) {
-	List<Customer> customerList = null;
+    @Transactional
+    public Customer getCustomerById(String id) {
+	Customer customer = null;
 	try {
-	    customerList = customerDao.getCustomerById(id);
+	    customer = customerDao.getCustomerById(id);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
-	return customerList;
+	return customer;
     }
 
     @Autowired
