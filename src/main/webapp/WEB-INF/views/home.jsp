@@ -16,18 +16,24 @@
 
 	<div align="center">
 		<label style="color: red;"> 
-		<c:choose>
-				<c:when test="${param.err == 'af'}">
+			<c:choose>
+				<c:when test="${param.msg == 'cw'}">
 					       Login Failed. Please try again.
 					   </c:when>
-				<c:when test="${param.err == 'se'}">
+				<c:when test="${param.msg == 'se'}">
 					       Session expired. Please login again.
                        </c:when>
-				<c:when test="${param.err == 'al'}">
+				<c:when test="${param.msg == 'al'}">
                             User is already logged in.
                        </c:when>
-				<c:when test="${param.err == 'sedl'}">
+				<c:when test="${param.msg == 'sedl'}">
                             Duplicate login tried.
+                       </c:when>
+				<c:when test="${param.msg == 'ce'}">
+                            Credentials expired.
+                       </c:when>
+				<c:when test="${param.msg == 'ad'}">
+                            Account disabled.
                        </c:when>
 			</c:choose>
 		</label>

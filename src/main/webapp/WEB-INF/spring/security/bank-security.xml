@@ -3,29 +3,71 @@
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
-	
+
+	<mvc:annotation-driven />
+	<context:annotation-config />
+	<context:component-scan base-package="com.transbank.online" />
+
+	<!-- authentication failure handler -->
+    <beans:bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+        <beans:property name="exceptionMappings">
+            <beans:props>
+                <beans:prop key="org.springframework.security.authentication.BadCredentialsException">/landing?msg=cw</beans:prop>
+                <beans:prop key="org.springframework.security.authentication.CredentialsExpiredException">/landing?msg=ce</beans:prop>
+                <beans:prop key="org.springframework.security.authentication.LockedException">/landing?msg=al</beans:prop>
+                <beans:prop key="org.springframework.security.authentication.DisabledException">/landing?msg=ad</beans:prop>
+            </beans:props>
+        </beans:property>
+    </beans:bean>
+
 	<http auto-config="true" use-expressions="true" access-denied-page="/denied">
 		<intercept-url pattern="/dashboard" access="isFullyAuthenticated()" />
 		<intercept-url pattern="/cash/handle" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url pattern="/customer/add" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url pattern="/customer/view" access="isFullyAuthenticated()" />
-		<form-login login-page="/landing" default-target-url="/dashboard" authentication-failure-url="/landing?err=af" />		
-		<remember-me key="transbank" token-validity-seconds="864000" />		
+		<form-login login-page="/landing" default-target-url="/dashboard" authentication-failure-handler-ref="authenticationFailureHandler" />		
+		<remember-me key="transbank" token-validity-seconds="864000" user-service-ref="authService" authentication-success-handler-ref="authHandler" />
         <logout invalidate-session="true" logout-success-url="/landing" delete-cookies="JSESSIONID" />
         <session-management invalid-session-url="/landing?err=se" session-authentication-error-url="/landing?err=al">
             <concurrency-control max-sessions="1" expired-url="/landing?err=sedl" error-if-maximum-exceeded="false" />
         </session-management>
 	</http>
 	
+	<beans:bean id="authHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/dashboard" />
+	</beans:bean>
+	
+	<beans:bean id="authSuccessHandler" class="com.transbank.online.handlers.AuthSuccessHandler" />
+
+	<!-- password encoder -->
+	<beans:bean id="encoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
+
+	<beans:bean id="daoAuthenticationProvider"
+        class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <beans:property name="userDetailsService" ref="authService" />
+    </beans:bean>
+
+	<beans:bean id="authenticationManager"
+        class="org.springframework.security.authentication.ProviderManager">
+        <beans:property name="providers">
+            <beans:list>
+                <beans:ref local="daoAuthenticationProvider" />
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
+	<!-- this is the authentication service -->
+    <beans:bean id="authService" class="com.transbank.online.service.impl.AuthService" />
+
+	<!-- This is the authentication manager -->
 	<authentication-manager>
-		<authentication-provider>
-			<user-service>
-				<user name="jeevan" password="patil" authorities="ROLE_ADMIN"/>
-				<user name="sachin" password="sachin" authorities="ROLE_CUSTOMER"/>
-			</user-service>
-		</authentication-provider>
-	</authentication-manager>
+	   <authentication-provider user-service-ref="authService">
+	   	<password-encoder ref="encoder" />
+       </authentication-provider>
+    </authentication-manager>
 </beans:beans>
