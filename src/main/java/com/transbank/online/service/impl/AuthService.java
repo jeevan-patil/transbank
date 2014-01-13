@@ -25,7 +25,9 @@ import com.transbank.online.dao.iface.CustomerDao;
  * 
  * @author jeevan
  * @since Apr 30, 2013
- * @purpose
+ * @purpose Custom spring security authentication class. This class implements UserDetailsService interface provide 
+ * by spring security packages. Service calls underlined DAO implementation to find out user with provided credentials.
+ * loadUserByUsername method returns UserDetails object with basic user information and roles.
  * 
  */
 
